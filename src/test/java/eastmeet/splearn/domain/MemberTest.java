@@ -3,7 +3,6 @@ package eastmeet.splearn.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +25,7 @@ class MemberTest {
             }
         };
 
-        MemberCreateRequest createRequest = new MemberCreateRequest("eastmeet", "eastmeet", "secret");
+        MemberCreateRequest createRequest = new MemberCreateRequest("ldw@gmail.com", "eastmeet", "secret");
         member = Member.create(createRequest, passwordEncoder);
     }
 
@@ -71,38 +70,47 @@ class MemberTest {
 
     @Test
     void verifyPassword() {
-        Assertions.assertThat(member.verifyPassword("secret", passwordEncoder)).isTrue();
-        Assertions.assertThat(member.verifyPassword("hello", passwordEncoder)).isFalse();
+        assertThat(member.verifyPassword("secret", passwordEncoder)).isTrue();
+        assertThat(member.verifyPassword("hello", passwordEncoder)).isFalse();
     }
 
     @Test
     void changeNickname() {
-        Assertions.assertThat(member.getNickname()).isEqualTo("eastmeet");
+        assertThat(member.getNickname()).isEqualTo("eastmeet");
 
         member.changeNickname("lucas");
 
-        Assertions.assertThat(member.getNickname()).isEqualTo("lucas");
+        assertThat(member.getNickname()).isEqualTo("lucas");
     }
 
     @Test
     void changePassword() {
         member.changePassword("verysecret", passwordEncoder);
         
-        Assertions.assertThat(member.verifyPassword("verysecret", passwordEncoder)).isTrue();
+        assertThat(member.verifyPassword("verysecret", passwordEncoder)).isTrue();
     }
 
     @Test
     void shouldBeActive() {
-        Assertions.assertThat(member.isActive()).isFalse();
+        assertThat(member.isActive()).isFalse();
 
         member.activate();
 
-        Assertions.assertThat(member.isActive()).isTrue();
+        assertThat(member.isActive()).isTrue();
 
         member.deactivate();
 
-        Assertions.assertThat(member.isActive()).isFalse();
+        assertThat(member.isActive()).isFalse();
     }
 
+    @Test
+    void invalidEmail() {
+        assertThatThrownBy(
+            () -> Member.create(new MemberCreateRequest("invalid email", "eastmeet", "secret"), passwordEncoder))
+            .isInstanceOf(IllegalArgumentException.class);
+
+        Member.create(new MemberCreateRequest("ldw@gmail.com", "eastmeet", "secret"),
+            passwordEncoder);
+    }
 
 }

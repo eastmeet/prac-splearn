@@ -3,7 +3,6 @@ package eastmeet.splearn.domain;
 import static java.util.Objects.*;
 import static org.springframework.util.Assert.state;
 
-import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member {
 
-    private String email;
+    private Email email;
 
     private String nickname;
 
@@ -26,7 +25,7 @@ public class Member {
         PasswordEncoder passwordEncoder) {
         Member member = new Member();
 
-        member.email = requireNonNull(createReq.email());
+        member.email = new Email(createReq.email());
         member.nickname = requireNonNull(createReq.nickname());
         member.passwordHash = requireNonNull(
             passwordEncoder.encode(createReq.password()));
